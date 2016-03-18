@@ -3,6 +3,7 @@ package tibame.example.shopping;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -109,5 +110,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         accessTokenTracker.stopTracking();
+    }
+
+    public void goAddItem(View view) {
+        if (isLogin) {
+            Intent intent = new Intent(this, NewItemActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(MainActivity.this, "請先登入，才可以上架商品。", Toast.LENGTH_SHORT).show();
+        }
     }
 }
