@@ -9,9 +9,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="tibame.example.shopping.MainActivity">
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageViewUserPicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.facebook.login.widget.LoginButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+
 
 </RelativeLayout>
