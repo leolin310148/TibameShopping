@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private boolean isLogin = false;
     private AccessTokenTracker accessTokenTracker;
+    private String userUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     String uid = authData.getUid();
                     firebase.child("users").child(uid).child("name").setValue(userName);
 
+                    userUid = uid;
                 } else {
                     isLogin = false;
                     imageViewUserPicture.setImageResource(0);
@@ -115,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
     public void goAddItem(View view) {
         if (isLogin) {
             Intent intent = new Intent(this, NewItemActivity.class);
+            intent.putExtra("userUid", userUid);
             startActivity(intent);
         } else {
             Toast.makeText(MainActivity.this, "請先登入，才可以上架商品。", Toast.LENGTH_SHORT).show();
