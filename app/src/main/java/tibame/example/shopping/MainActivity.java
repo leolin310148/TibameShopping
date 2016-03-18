@@ -3,10 +3,13 @@ package tibame.example.shopping;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -24,6 +27,12 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,14 +126,29 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                List<String> itemNames = new ArrayList<String>();
+                List<Item> items = new ArrayList<>();
                 for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
 
                     Item item = objectMapper.convertValue(itemSnapshot.getValue(), Item.class);
-                    itemNames.add(item.getName());
+
+                    String key = itemSnapshot.getKey();
+                    item.setKey(key);
+
+                    items.add(item);
+
+                    File file = new File(getCacheDir(), key);
+                    if (!file.exists()) {
+                        byte[] bytes = Base64.decode(item.getImageBase64(), Base64.DEFAULT);
+                        try {
+                            IOUtils.copy(new ByteArrayInputStream(bytes), new FileOutputStream(file));
+                        } catch (IOException e) {
+                        }
+                    }
                 }
 
-                listView.setAdapter(new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, itemNames));
+                ItemListAdapter adapter = new ItemListAdapter();
+                adapter.setItems(items);
+                listView.setAdapter(adapter);
             }
 
             @Override
@@ -154,5 +178,51 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(MainActivity.this, "請先登入，才可以上架商品。", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    class ItemListAdapter extends BaseAdapter {
+
+        private List<Item> items;
+
+        public void setItems(List<Item> items) {
+            this.items = items;
+        }
+
+        @Override
+        public int getCount() {
+            return items.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return items.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.listitem_item, null);
+            }
+
+            Item item = (Item) getItem(position);
+
+            TextView textViewItemName = (TextView) convertView.findViewById(R.id.textViewItemName);
+            TextView textViewItemPrice = (TextView) convertView.findViewById(R.id.textViewItemPrice);
+            ImageView imageViewItemPicture = (ImageView) convertView.findViewById(R.id.imageViewItemPicture);
+
+            textViewItemName.setText(item.getName());
+            textViewItemPrice.setText(String.valueOf(item.getPrice()));
+            Picasso.with(MainActivity.this).load(new File(getCacheDir(),item.getKey())).into(imageViewItemPicture);
+
+
+            return convertView;
+        }
+
+
     }
 }
