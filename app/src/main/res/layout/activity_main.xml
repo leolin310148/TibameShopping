@@ -10,6 +10,7 @@
     tools:context="tibame.example.shopping.MainActivity">
 
     <LinearLayout
+        android:id="@+id/controlBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -29,6 +30,14 @@
             android:onClick="goAddItem"
             android:text="上架商品" />
     </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/controlBar">
+
+    </ListView>
 
 
 </RelativeLayout>

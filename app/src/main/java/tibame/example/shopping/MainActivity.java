@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -14,10 +16,16 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,11 +34,15 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLogin = false;
     private AccessTokenTracker accessTokenTracker;
     private String userUid;
+    private ListView listView;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        listView = (ListView) findViewById(R.id.listView);
 
         final Firebase firebase = new Firebase("https://tibame-0312-leo.firebaseio.com/");
 
@@ -100,6 +112,26 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+
+        firebase.child("items").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                List<String> itemNames = new ArrayList<String>();
+                for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
+
+                    Item item = objectMapper.convertValue(itemSnapshot.getValue(), Item.class);
+                    itemNames.add(item.getName());
+                }
+
+                listView.setAdapter(new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, itemNames));
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
     @Override
