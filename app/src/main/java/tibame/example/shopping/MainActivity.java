@@ -3,6 +3,7 @@ package tibame.example.shopping;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -16,6 +17,7 @@ import com.facebook.login.LoginResult;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 if (currentAccessToken == null) {
                     Toast.makeText(MainActivity.this, "還沒登入facebook", Toast.LENGTH_SHORT).show();
                     firebase.unauth();
-                }else{
+                } else {
                     Toast.makeText(MainActivity.this, "已經登入facebook", Toast.LENGTH_SHORT).show();
 
                     firebase.authWithOAuthToken("facebook", currentAccessToken.getToken(), new Firebase.AuthResultHandler() {
@@ -79,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-
         firebase.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
             public void onAuthStateChanged(AuthData authData) {
@@ -87,6 +88,16 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "還沒登入firebase", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "已經登入firebase", Toast.LENGTH_SHORT).show();
+
+                    String uid = authData.getUid();
+                    String imageUrl = (String) authData.getProviderData().get("profileImageURL");
+                    String userName = (String) authData.getProviderData().get("displayName");
+
+                    ImageView imageView = (ImageView) findViewById(R.id.imageViewUserPicture);
+
+                    Picasso.with(MainActivity.this).load(imageUrl).into(imageView);
+
+                    firebase.child("users").child(uid).child("name").setValue(userName);
                 }
             }
         });
