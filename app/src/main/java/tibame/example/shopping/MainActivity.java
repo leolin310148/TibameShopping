@@ -3,6 +3,7 @@ package tibame.example.shopping;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
+    private AuthData authData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +86,14 @@ public class MainActivity extends AppCompatActivity {
         firebase.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
             public void onAuthStateChanged(AuthData authData) {
+                MainActivity.this.authData = authData;
+
+                ImageView imageView = (ImageView) findViewById(R.id.imageViewUserPicture);
+
                 if (authData == null) {
                     Toast.makeText(MainActivity.this, "還沒登入firebase", Toast.LENGTH_SHORT).show();
+
+                    imageView.setImageResource(0);
                 } else {
                     Toast.makeText(MainActivity.this, "已經登入firebase", Toast.LENGTH_SHORT).show();
 
@@ -93,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
                     String imageUrl = (String) authData.getProviderData().get("profileImageURL");
                     String userName = (String) authData.getProviderData().get("displayName");
 
-                    ImageView imageView = (ImageView) findViewById(R.id.imageViewUserPicture);
 
                     Picasso.with(MainActivity.this).load(imageUrl).into(imageView);
 
@@ -109,5 +116,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void goAddItem(View view) {
+
+        if (authData == null){
+            Toast.makeText(MainActivity.this, "請先登入，才可以上架商品", Toast.LENGTH_SHORT).show();
+        }else {
+
+            Intent intent = new Intent(this,NewItemActivity.class);
+            startActivity(intent);
+
+
+        }
+
     }
 }
