@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         }else {
 
             Intent intent = new Intent(this,NewItemActivity.class);
+            intent.putExtra("userUid", authData.getUid());
             startActivity(intent);
 
 
