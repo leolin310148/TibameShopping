@@ -29,12 +29,14 @@
         android:layout_height="wrap_content" />
 
     <Button
+        android:onClick="choosePicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="選擇照片" />
 
 
     <Button
+        android:onClick="takePicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="拍照" />
