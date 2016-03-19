@@ -9,6 +9,7 @@ public class Item {
     private int price;
     private String imageBase64;
     private String userUid;
+    private String key;
 
     public String getName() {
         return name;
@@ -40,5 +41,13 @@ public class Item {
 
     public void setUserUid(String userUid) {
         this.userUid = userUid;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

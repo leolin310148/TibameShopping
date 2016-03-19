@@ -3,6 +3,7 @@ package tibame.example.shopping;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -27,6 +28,12 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,6 +138,20 @@ public class MainActivity extends AppCompatActivity {
 
                     Item item = objectMapper.convertValue(itemSnapshot.getValue(), Item.class);
 
+                    String key = itemSnapshot.getKey();
+                    File file = new File(getCacheDir(), key);
+                    if (file.exists() == false) {
+                        try {
+                            byte[] bytes = Base64.decode(item.getImageBase64(), Base64.DEFAULT);
+                            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+                            FileOutputStream fos = new FileOutputStream(file);
+                            IOUtils.copy(bais, fos);
+                        }catch (IOException e){
+
+                        }
+                    }
+
+                    item.setKey(key);
                     items.add(item);
 
                 }
@@ -174,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     class ItemListAdapter extends BaseAdapter {
 
         List<Item> items;
@@ -209,9 +229,12 @@ public class MainActivity extends AppCompatActivity {
 
             TextView textViewItemName = (TextView) convertView.findViewById(R.id.textViewItemName);
             TextView textViewItemPrice = (TextView) convertView.findViewById(R.id.textViewItemPrice);
+            ImageView imageView = (ImageView) convertView.findViewById(R.id.imageViewItemPicture);
 
             textViewItemName.setText(item.getName());
             textViewItemPrice.setText(String.valueOf(item.getPrice()));
+
+            Picasso.with(MainActivity.this).load(new File(getCacheDir(),item.getKey())).into(imageView);
 
             return convertView;
         }
