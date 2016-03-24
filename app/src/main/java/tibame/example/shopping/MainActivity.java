@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private AuthData authData;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         Firebase.setAndroidContext(getApplicationContext());
 
         setContentView(R.layout.activity_main);
+
+        listView = (ListView) findViewById(R.id.listView);
 
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -156,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                ListView listView = (ListView) findViewById(R.id.listView);
+
 //                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, itemNames);
                 ItemListAdapter adapter = new ItemListAdapter();
                 adapter.setItems(items);
@@ -168,6 +172,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(FirebaseError firebaseError) {
 
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Item item = (Item) parent.getItemAtPosition(position);
+                Intent intent = new Intent(MainActivity.this, ItemDetailActivity.class);
+                intent.putExtra("item", item);
+                startActivity(intent);
             }
         });
 
