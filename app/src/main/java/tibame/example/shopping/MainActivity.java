@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Firebase firebase = new Firebase("https://tibame-0312-leo.firebaseio.com");
+        final Firebase firebase = new Firebase(Config.FIRE_BASE_URL);
 
 
         accessTokenTracker = new AccessTokenTracker() {
@@ -234,7 +234,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goCart(View view) {
-
+        if (authData == null) {
+            Toast.makeText(MainActivity.this, "請先登入，才可以進行結帳", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(this, CartListActivity.class);
+            intent.putExtra("userUid", authData.getUid());
+            startActivity(intent);
+        }
     }
 
 

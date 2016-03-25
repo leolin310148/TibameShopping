@@ -91,7 +91,7 @@ public class NewItemActivity extends AppCompatActivity {
         int price = Integer.parseInt(itemPrice);
         String userUid = getIntent().getStringExtra("userUid");
 
-        Firebase firebase = new Firebase("https://tibame-0312-leo.firebaseio.com");
+        Firebase firebase = new Firebase(Config.FIRE_BASE_URL);
 
 //        Map<String, Object> item = new HashMap<>();
 //

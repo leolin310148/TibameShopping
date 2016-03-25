@@ -26,8 +26,9 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name=".NewItemActivity"></activity>
-        <activity android:name=".ItemDetailActivity"></activity>
+        <activity android:name=".NewItemActivity" />
+        <activity android:name=".ItemDetailActivity" />
+        <activity android:name=".CartListActivity"></activity>
     </application>
 
 </manifest>

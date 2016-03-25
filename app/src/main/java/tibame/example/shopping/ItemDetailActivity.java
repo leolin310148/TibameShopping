@@ -20,7 +20,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
 
-        final Firebase firebase = new Firebase("https://tibame-0312-leo.firebaseio.com");
+        final Firebase firebase = new Firebase(Config.FIRE_BASE_URL);
 
         final Item item = (Item) getIntent().getSerializableExtra("item");
 
