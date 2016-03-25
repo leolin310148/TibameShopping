@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private AccessTokenTracker accessTokenTracker;
     private AuthData authData;
     ListView listView;
+    Firebase firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Firebase firebase = new Firebase(Config.FIRE_BASE_URL);
+        firebase = new Firebase(Config.FIRE_BASE_URL);
 
 
         accessTokenTracker = new AccessTokenTracker() {
@@ -112,11 +114,13 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.authData = authData;
 
                 ImageView imageView = (ImageView) findViewById(R.id.imageViewUserPicture);
+                View userActionLayout = findViewById(R.id.userActionLayout);
 
                 if (authData == null) {
                     Toast.makeText(MainActivity.this, "還沒登入firebase", Toast.LENGTH_SHORT).show();
 
                     imageView.setImageResource(0);
+                    userActionLayout.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(MainActivity.this, "已經登入firebase", Toast.LENGTH_SHORT).show();
 
@@ -128,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
                     Picasso.with(MainActivity.this).load(imageUrl).into(imageView);
 
                     firebase.child("users").child(uid).child("name").setValue(userName);
+                    userActionLayout.setVisibility(View.VISIBLE);
+                    refreshOrders();
                 }
             }
         });
@@ -195,6 +201,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void refreshOrders() {
+        firebase.child("orders").orderByChild("buyerUid").equalTo(authData.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Button buttonBuyingOrders = (Button) findViewById(R.id.buttonBuyingOrders);
+                buttonBuyingOrders.setText("我買到的(" + dataSnapshot.getChildrenCount() + ")");
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+        firebase.child("orders").orderByChild("item/userUid").equalTo(authData.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Button buttonSellingOrders = (Button) findViewById(R.id.buttonSellingOrders);
+                buttonSellingOrders.setText("我賣出的(" + dataSnapshot.getChildrenCount() + ")");
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
     @Override

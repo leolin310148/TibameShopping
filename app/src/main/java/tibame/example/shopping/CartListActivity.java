@@ -27,6 +27,7 @@ public class CartListActivity extends AppCompatActivity {
     ListView listView;
     CartListAdapter cartListAdapter = new CartListAdapter();
     DataSnapshot dataSnapshot;
+    Firebase firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class CartListActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(cartListAdapter);
 
-        final Firebase firebase = new Firebase(Config.FIRE_BASE_URL);
+        firebase = new Firebase(Config.FIRE_BASE_URL);
         firebase.child("items").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -77,11 +78,40 @@ public class CartListActivity extends AppCompatActivity {
         cartListAdapter.notifyDataSetChanged();
     }
 
+    public void doOrder(View view) {
+
+        if (Cart.getItemKeys().isEmpty()) {
+            Toast.makeText(CartListActivity.this, "您的購物車是空的，請重新選擇商品。", Toast.LENGTH_SHORT).show();
+        } else {
+            String userUid = getIntent().getStringExtra("userUid");
+
+            List<Item> items = cartListAdapter.getItems();
+
+            for (Item item : items) {
+                Order order = new Order();
+                order.setBuyerUid(userUid);
+                order.setItem(item);
+                firebase.child("orders").push().setValue(order);
+            }
+
+
+            Cart.getItemKeys().clear();
+            Toast.makeText(CartListActivity.this, "下單完成", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+    }
+
     class CartListAdapter extends BaseAdapter {
         private List<Item> items = new ArrayList<>();
 
+
         public void setItems(List<Item> items) {
             this.items = items;
+        }
+
+        public List<Item> getItems() {
+            return items;
         }
 
         @Override

@@ -23,12 +23,39 @@
             android:layout_height="wrap_content" />
 
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/userActionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="30"
             android:onClick="goAddItem"
             android:text="上架新商品" />
+
+        <Button
+            android:id="@+id/buttonBuyingOrders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="30"
+            android:onClick="goBuyingOrders"
+            android:text="我買到的" />
+
+        <Button
+            android:id="@+id/buttonSellingOrders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="30"
+            android:onClick="goSellingOrders"
+            android:text="我賣出的" />
+
     </LinearLayout>
+
 
     <ListView
         android:id="@+id/listView"
@@ -39,11 +66,11 @@
 
     </ListView>
 
+
     <LinearLayout
         android:id="@+id/cartLayout"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="#88000000"
+        android:layout_height="wrap_content"
         android:gravity="right"
         android:orientation="horizontal">
 
