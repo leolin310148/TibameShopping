@@ -274,10 +274,12 @@ public class MainActivity extends AppCompatActivity {
             TextView textViewItemPrice = (TextView) convertView.findViewById(R.id.textViewItemPrice);
             ImageView imageView = (ImageView) convertView.findViewById(R.id.imageViewItemPicture);
 
-            textViewItemName.setText(item.getName());
-            textViewItemPrice.setText(String.valueOf(item.getPrice()));
-
-            Picasso.with(MainActivity.this).load(new File(getCacheDir(), item.getKey())).into(imageView);
+            ItemPresenter presenter = new ItemPresenter();
+            presenter.setTextViewItemName(textViewItemName);
+            presenter.setTextViewItemPrice(textViewItemPrice);
+            presenter.setImageViewItemPicture(imageView);
+            presenter.setItem(item);
+            presenter.render(MainActivity.this);
 
             return convertView;
         }

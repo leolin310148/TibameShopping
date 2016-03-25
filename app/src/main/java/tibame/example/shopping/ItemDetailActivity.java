@@ -1,7 +1,7 @@
 package tibame.example.shopping;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -12,9 +12,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 
 public class ItemDetailActivity extends AppCompatActivity {
 
@@ -33,10 +30,12 @@ public class ItemDetailActivity extends AppCompatActivity {
         final TextView textViewItemSeller = (TextView) findViewById(R.id.textViewItemSeller);
         Button buttonAddToCart = (Button) findViewById(R.id.buttonAddToCart);
 
-
-        textViewItemName.setText(item.getName());
-        textViewItemPrice.setText(String.valueOf(item.getPrice()));
-        Picasso.with(this).load(new File(getCacheDir(), item.getKey())).into(imageViewItemPicture);
+        ItemPresenter presenter = new ItemPresenter();
+        presenter.setTextViewItemName(textViewItemName);
+        presenter.setTextViewItemPrice(textViewItemPrice);
+        presenter.setImageViewItemPicture(imageViewItemPicture);
+        presenter.setItem(item);
+        presenter.render(this);
 
         firebase.child("users").child(item.getUserUid()).child("name").addValueEventListener(new ValueEventListener() {
             @Override
