@@ -37,6 +37,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                             ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
                             FileOutputStream fos = new FileOutputStream(file);
                             IOUtils.copy(bais, fos);
-                        }catch (IOException e){
+                        } catch (IOException e) {
 
                         }
                     }
@@ -181,10 +183,33 @@ public class MainActivity extends AppCompatActivity {
                 Item item = (Item) parent.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, ItemDetailActivity.class);
                 intent.putExtra("item", item);
+
+                boolean canAddToCart = true;
+                if (authData != null && Objects.equals(item.getUserUid(), authData.getUid())) {
+                    canAddToCart = false;
+                }
+
+                intent.putExtra("canAddToCart", canAddToCart);
+
                 startActivity(intent);
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        View cartLayout = findViewById(R.id.cartLayout);
+        Set<String> itemKeys = Cart.getItemKeys();
+        if (itemKeys.isEmpty()) {
+            cartLayout.setVisibility(View.GONE);
+        } else {
+            cartLayout.setVisibility(View.VISIBLE);
+            TextView textViewCartCount = (TextView) findViewById(R.id.textViewCartCount);
+            textViewCartCount.setText(String.valueOf(itemKeys.size()));
+        }
     }
 
     @Override
@@ -205,6 +230,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+
+    }
+
+    public void goCart(View view) {
 
     }
 
@@ -248,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
             textViewItemName.setText(item.getName());
             textViewItemPrice.setText(String.valueOf(item.getPrice()));
 
-            Picasso.with(MainActivity.this).load(new File(getCacheDir(),item.getKey())).into(imageView);
+            Picasso.with(MainActivity.this).load(new File(getCacheDir(), item.getKey())).into(imageView);
 
             return convertView;
         }
