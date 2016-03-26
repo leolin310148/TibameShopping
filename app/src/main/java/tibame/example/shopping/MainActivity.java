@@ -261,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Button buttonBuyingOrders = (Button) findViewById(R.id.buttonBuyingOrders);
                         buttonBuyingOrders.setText(getString(R.string.info_buying, dataSnapshot.getChildrenCount()));
+
                     }
 
                     @Override
@@ -269,6 +270,35 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        firebase.child("orders")
+                .orderByChild("item/userUid")
+                .equalTo(authData.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Button buttonSellingOrders = (Button) findViewById(R.id.buttonSellingOrders);
+                        buttonSellingOrders.setText(getString(R.string.info_selling, dataSnapshot.getChildrenCount()));
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+
+    }
+
+    public void goOrderList(View view) {
+        Intent intent = new Intent(MainActivity.this, OrderListActivity.class);
+        intent.putExtra("userUid", authData.getUid());
+
+        if (view.getId() == R.id.buttonBuyingOrders) {
+            intent.putExtra("mode", "buying");
+        } else if (view.getId() == R.id.buttonSellingOrders) {
+            intent.putExtra("mode", "selling");
+        }
+
+        startActivity(intent);
     }
 
     class ItemListAdapter extends BaseAdapter {

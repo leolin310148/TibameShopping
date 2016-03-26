@@ -17,6 +17,8 @@ public class Order {
 
     private int status;
 
+    private String key;
+
     public String getBuyerUserUid() {
         return buyerUserUid;
     }
@@ -39,5 +41,13 @@ public class Order {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

@@ -30,7 +30,8 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".NewItemActivity" />
         <activity android:name=".ItemDetailActivity" />
-        <activity android:name=".CartListActivity"></activity>
+        <activity android:name=".CartListActivity" />
+        <activity android:name=".OrderListActivity"></activity>
     </application>
 
 </manifest>

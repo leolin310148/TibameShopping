@@ -32,12 +32,15 @@
             android:id="@+id/buttonBuyingOrders"
             android:layout_weight="33"
             android:text="我買到的"
+            android:onClick="goOrderList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <Button
+            android:id="@+id/buttonSellingOrders"
             android:layout_weight="33"
             android:text="我賣出的"
+            android:onClick="goOrderList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
