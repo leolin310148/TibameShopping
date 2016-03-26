@@ -178,6 +178,7 @@ public class OrderListActivity extends AppCompatActivity {
 
                 } else {
                     buttonOrderCancel.setVisibility(View.GONE);
+                    buttonOrderAction.setVisibility(View.GONE);
                 }
 
             }

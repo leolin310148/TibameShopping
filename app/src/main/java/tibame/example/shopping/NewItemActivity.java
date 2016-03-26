@@ -1,5 +1,6 @@
 package tibame.example.shopping;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -106,8 +108,16 @@ public class NewItemActivity extends AppCompatActivity {
         item.setImageBase64(imageBase64);
         item.setUserUid(userUid);
 
-        firebase.child("items").push().setValue(item);
+        final ProgressDialog progressDialog = ProgressDialog.show(NewItemActivity.this, "處理中", "請稍候", false, false);
 
-        finish();
+        firebase.child("items").push().setValue(item, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                progressDialog.dismiss();
+                finish();
+            }
+        });
+
+
     }
 }
