@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private AuthData authData;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         Firebase.setAndroidContext(getApplicationContext());
 
         setContentView(R.layout.activity_main);
+
+        listView = (ListView) findViewById(R.id.listView);
 
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -106,11 +110,13 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.authData = authData;
 
                 ImageView imageView = (ImageView) findViewById(R.id.imageViewUserPicture);
+                View layoutUserActions = findViewById(R.id.layoutUserActions);
 
                 if (authData == null) {
                     Toast.makeText(MainActivity.this, "還沒登入firebase", Toast.LENGTH_SHORT).show();
 
                     imageView.setImageResource(0);
+                    layoutUserActions.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(MainActivity.this, "已經登入firebase", Toast.LENGTH_SHORT).show();
 
@@ -122,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
                     Picasso.with(MainActivity.this).load(imageUrl).into(imageView);
 
                     firebase.child("users").child(uid).child("name").setValue(userName);
+
+                    layoutUserActions.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -146,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                             ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
                             FileOutputStream fos = new FileOutputStream(file);
                             IOUtils.copy(bais, fos);
-                        }catch (IOException e){
+                        } catch (IOException e) {
 
                         }
                     }
@@ -156,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                ListView listView = (ListView) findViewById(R.id.listView);
+
 //                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, itemNames);
                 ItemListAdapter adapter = new ItemListAdapter();
                 adapter.setItems(items);
@@ -168,6 +176,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(FirebaseError firebaseError) {
 
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Item item = (Item) parent.getItemAtPosition(position);
+
+                Intent intent = new Intent(MainActivity.this,ItemDetailActivity.class);
+                intent.putExtra("item",item);
+
+                startActivity(intent);
             }
         });
 

@@ -1,9 +1,11 @@
 package tibame.example.shopping;
 
+import java.io.Serializable;
+
 /**
  * @author leolin
  */
-public class Item {
+public class Item implements Serializable{
 
     private String name;
     private int price;
@@ -50,4 +52,6 @@ public class Item {
     public void setKey(String key) {
         this.key = key;
     }
+
+
 }

@@ -24,6 +24,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layoutUserActions"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -56,6 +57,8 @@
     </ListView>
 
     <LinearLayout
+        android:id="@+id/layoutCart"
+        android:visibility="gone"
         android:gravity="right"
         android:orientation="horizontal"
         android:layout_width="match_parent"
