@@ -183,14 +183,35 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Item item = (Item) parent.getItemAtPosition(position);
+                boolean canAddToCart = true;
+                if(authData != null && item.getUserUid().equals(authData.getUid()) ){
+                    canAddToCart = false;
+                }
 
                 Intent intent = new Intent(MainActivity.this,ItemDetailActivity.class);
                 intent.putExtra("item",item);
+                intent.putExtra("canAddToCart",canAddToCart);
 
                 startActivity(intent);
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        View layoutCart = findViewById(R.id.layoutCart);
+        if(Cart.getItemKeys().isEmpty()){
+            layoutCart.setVisibility(View.GONE);
+        }else{
+            layoutCart.setVisibility(View.VISIBLE);
+
+            TextView textViewCartCount = (TextView) findViewById(R.id.textViewCartCount);
+            //textViewCartCount.setText("購物車("+Cart.getItemKeys().size()+")");
+            textViewCartCount.setText(getString(R.string.info_cart_count,Cart.getItemKeys().size()));
+        }
     }
 
     @Override

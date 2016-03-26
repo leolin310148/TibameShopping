@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TibameShopping</string>
     <string name="facebook_app_id">242586366082332</string>
+    <string name="info_cart_count">購物車(%1$d)</string>
 </resources>
