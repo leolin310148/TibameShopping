@@ -25,6 +25,7 @@ public class CartListActivity extends AppCompatActivity {
 
     ListView listView;
     CartItemListAdapter cartItemListAdapter;
+    Firebase firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class CartListActivity extends AppCompatActivity {
         cartItemListAdapter = new CartItemListAdapter();
         listView.setAdapter(cartItemListAdapter);
 
-        final Firebase firebase = new Firebase(Config.FIRE_BASE_URL);
+        firebase = new Firebase(Config.FIRE_BASE_URL);
         final String currentUserUid = getIntent().getStringExtra("userUid");
 
         firebase.child("items").addValueEventListener(new ValueEventListener() {
@@ -74,12 +75,36 @@ public class CartListActivity extends AppCompatActivity {
         });
     }
 
+    public void doCreateOrder(View view) {
+
+        final String currentUserUid = getIntent().getStringExtra("userUid");
+
+        for (Item item : cartItemListAdapter.getItems()) {
+
+            Order order = new Order();
+            order.setItem(item);
+            order.setBuyerUserUid(currentUserUid);
+            order.setStatus(Order.STATUS_PROCESSING);
+
+            firebase.child("orders").push().setValue(order);
+        }
+
+        Cart.getItemKeys().clear();
+
+        finish();
+
+    }
+
     class CartItemListAdapter extends BaseAdapter {
 
         List<Item> items = new ArrayList<>();
 
         public void setItems(List<Item> items) {
             this.items = items;
+        }
+
+        public List<Item> getItems() {
+            return items;
         }
 
         @Override

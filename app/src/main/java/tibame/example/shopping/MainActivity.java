@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private AccessTokenTracker accessTokenTracker;
     private AuthData authData;
     ListView listView;
+    Firebase firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Firebase firebase = new Firebase(Config.FIRE_BASE_URL);
+        firebase = new Firebase(Config.FIRE_BASE_URL);
 
 
         accessTokenTracker = new AccessTokenTracker() {
@@ -130,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
                     firebase.child("users").child(uid).child("name").setValue(userName);
 
                     layoutUserActions.setVisibility(View.VISIBLE);
+
+                    findOrders();
                 }
             }
         });
@@ -184,13 +188,13 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Item item = (Item) parent.getItemAtPosition(position);
                 boolean canAddToCart = true;
-                if(authData != null && item.getUserUid().equals(authData.getUid()) ){
+                if (authData != null && item.getUserUid().equals(authData.getUid())) {
                     canAddToCart = false;
                 }
 
-                Intent intent = new Intent(MainActivity.this,ItemDetailActivity.class);
-                intent.putExtra("item",item);
-                intent.putExtra("canAddToCart",canAddToCart);
+                Intent intent = new Intent(MainActivity.this, ItemDetailActivity.class);
+                intent.putExtra("item", item);
+                intent.putExtra("canAddToCart", canAddToCart);
 
                 startActivity(intent);
             }
@@ -203,14 +207,14 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         View layoutCart = findViewById(R.id.layoutCart);
-        if(Cart.getItemKeys().isEmpty()){
+        if (Cart.getItemKeys().isEmpty()) {
             layoutCart.setVisibility(View.GONE);
-        }else{
+        } else {
             layoutCart.setVisibility(View.VISIBLE);
 
             TextView textViewCartCount = (TextView) findViewById(R.id.textViewCartCount);
             //textViewCartCount.setText("購物車("+Cart.getItemKeys().size()+")");
-            textViewCartCount.setText(getString(R.string.info_cart_count,Cart.getItemKeys().size()));
+            textViewCartCount.setText(getString(R.string.info_cart_count, Cart.getItemKeys().size()));
         }
     }
 
@@ -246,6 +250,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    private void findOrders() {
+
+        firebase.child("orders")
+                .orderByChild("buyerUserUid")
+                .equalTo(authData.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Button buttonBuyingOrders = (Button) findViewById(R.id.buttonBuyingOrders);
+                        buttonBuyingOrders.setText(getString(R.string.info_buying, dataSnapshot.getChildrenCount()));
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+
+    }
 
     class ItemListAdapter extends BaseAdapter {
 
@@ -286,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
             textViewItemName.setText(item.getName());
             textViewItemPrice.setText(String.valueOf(item.getPrice()));
 
-            Picasso.with(MainActivity.this).load(new File(getCacheDir(),item.getKey())).into(imageView);
+            Picasso.with(MainActivity.this).load(new File(getCacheDir(), item.getKey())).into(imageView);
 
             return convertView;
         }
